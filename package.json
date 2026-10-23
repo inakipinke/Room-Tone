@@ -8,13 +8,36 @@
     "prestart": "npm run build:worklet",
     "start": "electron .",
     "test": "node --test",
-    "build:worklet": "node src/build-worklet.cjs"
+    "build:worklet": "node src/build-worklet.cjs",
+    "build:icon": "node scripts/create-icon.cjs",
+    "dist:win": "npm run build:icon && npm run build:worklet && electron-builder --win portable"
   },
   "devDependencies": {
     "electron": "^45.0.0",
+    "electron-builder": "^26.15.3",
     "esbuild": "^0.28.2"
   },
   "dependencies": {
     "@shiguredo/rnnoise-wasm": "^2025.1.5"
+  },
+  "build": {
+    "appId": "com.roomtone.widget",
+    "productName": "Room Tone",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "assets/room-tone.ico",
+      "target": [
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "Room-Tone-${version}-portable.${ext}"
+    }
   }
 }

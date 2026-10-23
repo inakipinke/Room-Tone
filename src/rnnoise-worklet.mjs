@@ -52,9 +52,10 @@ var require_audio_meter = __commonJS({
       const normalized = Math.max(0, Math.min(100, threshold)) / 100;
       return Math.round(1100 + normalized * 900);
     }
-    function thresholdToAlertGain(threshold) {
+    function thresholdToAlertGain(threshold, volumePercent = 100) {
       const normalized = Math.max(0, Math.min(100, threshold)) / 100;
-      return 0.24 + normalized * 0.56;
+      const volume = Math.max(0, Math.min(100, volumePercent)) / 100;
+      return (0.24 + normalized * 0.56) * volume;
     }
     var ThresholdCrossings = class {
       constructor(hysteresis = 4) {
