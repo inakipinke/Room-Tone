@@ -1,0 +1,8 @@
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
+body { color: #eff4f0; font-family: 'Bahnschrift', 'Segoe UI', sans-serif; user-select: none; }
+.menu-panel { width: 100%; height: 100%; padding: 10px; border: 0; border-radius: 7px; background: #292c2e; box-shadow: inset 0 0 0 1px #55595b; }
+.menu-panel > strong { display: block; padding: 2px 4px 8px; color: #dce5df; font-size: 11px; }
+.menu-panel label { display: flex; align-items: center; gap: 8px; min-height: 31px; padding: 3px 4px; border-radius: 4px; color: #b4c0b8; font-size: 11px; cursor: pointer; }
+.menu-panel label:hover { background: #373b3d; }
+.menu-panel input { accent-color: #c7f36c; }

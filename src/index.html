@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:;">
+  <title>Mic Level</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="widget">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></span>
+        <div><strong>ROOM TONE</strong></div>
+      </div>
+      <div class="window-actions">
+        <button class="icon-button menu-button" id="blocksMenuButton" type="button" aria-label="Mostrar u ocultar bloques" title="Mostrar u ocultar bloques" aria-expanded="false"><span class="gear-icon" aria-hidden="true">⚙</span></button>
+        <button class="icon-button pin-button" id="alwaysOnTop" type="button" aria-label="Fijar ventana encima de otras" title="Fijar ventana encima de otras" aria-pressed="false"><span class="pin-icon" aria-hidden="true"></span></button>
+        <button class="icon-button" id="minimize" title="Minimizar" aria-label="Minimizar">−</button>
+        <button class="icon-button close" id="close" title="Cerrar" aria-label="Cerrar">×</button>
+      </div>
+    </header>
+
+    <section class="readout" aria-live="polite">
+      <div class="readout-label" id="statusBlock"><span class="live-dot" id="liveDot"></span><span id="status">Buscando micrófono</span></div>
+      <div class="meter-block" id="meterBlock">
+        <div class="meter" role="meter" aria-label="Nivel RMS del micrófono" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="meter-fill" id="meterFill"></div>
+          <div class="meter-thresholds" id="meterThresholds" aria-label="Umbrales de alerta de sonido">
+            <button type="button" data-threshold="10" aria-label="Alerta al 10 por ciento" aria-pressed="false" title="Alerta al 10%"></button>
+            <button type="button" data-threshold="20" aria-label="Alerta al 20 por ciento" aria-pressed="false" title="Alerta al 20%"></button>
+            <button type="button" data-threshold="30" aria-label="Alerta al 30 por ciento" aria-pressed="false" title="Alerta al 30%"></button>
+            <button type="button" data-threshold="40" aria-label="Alerta al 40 por ciento" aria-pressed="false" title="Alerta al 40%"></button>
+            <button type="button" data-threshold="50" aria-label="Alerta al 50 por ciento" aria-pressed="false" title="Alerta al 50%"></button>
+            <button type="button" data-threshold="60" aria-label="Alerta al 60 por ciento" aria-pressed="false" title="Alerta al 60%"></button>
+            <button type="button" data-threshold="70" aria-label="Alerta al 70 por ciento" aria-pressed="false" title="Alerta al 70%"></button>
+            <button type="button" data-threshold="80" aria-label="Alerta al 80 por ciento" aria-pressed="false" title="Alerta al 80%"></button>
+            <button type="button" data-threshold="90" aria-label="Alerta al 90 por ciento" aria-pressed="false" title="Alerta al 90%"></button>
+            <button type="button" data-threshold="100" aria-label="Alerta al 100 por ciento" aria-pressed="false" title="Alerta al 100%"></button>
+          </div>
+        </div>
+        <div class="scale"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+      </div>
+      <div class="peak-row" id="peakBlock"><span>PICO · 2,5 S</span><strong id="peak">0 / 100</strong></div>
+    </section>
+
+    <section class="controls">
+      <div class="device-block" id="deviceBlock">
+        <label class="field-label" for="deviceSelect">ENTRADA DE AUDIO</label>
+        <select id="deviceSelect" aria-label="Dispositivo de entrada"><option value="">Cargando dispositivos…</option></select>
+      </div>
+      <div class="range-control" id="rangeBlock">
+        <label for="rangeSlider">RANGO DEL MEDIDOR</label>
+        <output id="rangeOutput">−60 dBFS</output>
+        <input id="rangeSlider" type="range" min="-72" max="-24" step="6" value="-60">
+        <div class="range-hints"><span>Más sensible</span><span>Menos sensible</span></div>
+      </div>
+      <div class="range-control" id="alertVolumeBlock">
+        <label for="alertVolumeSlider">VOLUMEN DE ALERTAS</label>
+        <output id="alertVolumeOutput">100%</output>
+        <input id="alertVolumeSlider" type="range" min="0" max="100" step="5" value="100">
+        <div class="range-hints"><span>Silencioso</span><span>Máximo</span></div>
+      </div>
+      <div class="filter-block" id="filterBlock">
+        <div><strong>Filtro de voz</strong><small id="filterStatus">Preparando RNNoise local…</small></div>
+        <label class="switch" aria-label="Activar filtro de voz"><input id="voiceFilter" type="checkbox" checked><span class="switch-track"></span></label>
+      </div>
+    </section>
+    <section class="diagnostics-block" id="diagnosticsBlock" hidden aria-label="Captura de eventos de ventana">
+      <div class="diagnostics-header"><strong>Diagnóstico de ventana</strong><span id="diagnosticsState">Detenido</span></div>
+      <small class="diagnostics-note">Solo geometría y eventos de ventana; no captura audio. Máximo 500 eventos.</small>
+      <div class="diagnostics-actions">
+        <button class="diagnostics-button" id="diagnosticsToggle" type="button">Iniciar captura</button>
+        <button class="diagnostics-button" id="diagnosticsCopy" type="button" disabled>Copiar registro</button>
+        <button class="diagnostics-button icon-only" id="diagnosticsClear" type="button" aria-label="Limpiar registro" title="Limpiar registro">×</button>
+      </div>
+        <textarea class="diagnostics-log" id="diagnosticsLog" readonly spellcheck="false" aria-label="Registro de eventos"></textarea>
+    </section>
+
+    <footer class="footer">
+      <button class="run-button" id="pauseButton"><span id="pauseLabel">Pausar</span></button>
+    </footer>
+    <div class="notice" id="notice" hidden><span id="noticeText"></span><button id="retryButton" type="button">Reintentar</button></div>
+  </main>
+  <script src="audio-meter.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

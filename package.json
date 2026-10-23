@@ -1,0 +1,20 @@
+{
+  "name": "mic-noise-widget",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Compact Windows desktop microphone level meter",
+  "main": "src/main.cjs",
+  "scripts": {
+    "prestart": "npm run build:worklet",
+    "start": "electron .",
+    "test": "node --test",
+    "build:worklet": "node src/build-worklet.cjs"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "@shiguredo/rnnoise-wasm": "^2025.1.5"
+  }
+}
